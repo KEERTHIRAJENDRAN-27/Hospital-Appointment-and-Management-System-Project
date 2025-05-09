@@ -1,7 +1,5 @@
 package com.cts.project.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cts.project.dto.AppointmentPatientRequestDTO;
-import com.cts.project.dto.AppointmentPatientResponseDTO;
+import com.cts.project.dto.AppointmentDTO;
+import com.cts.project.model.Appointment;
 import com.cts.project.service.AppointmentService;
 
 @RestController
@@ -21,30 +19,30 @@ import com.cts.project.service.AppointmentService;
 public class AppointmentController {
 
 	@Autowired
-	private AppointmentService service;
+	private AppointmentService appointmentService;
 
 	@PostMapping("/save")
-	public AppointmentPatientResponseDTO create(@RequestBody AppointmentPatientRequestDTO dto) {
-		return service.create(dto);
+	public String createAppointment(@RequestBody AppointmentDTO dto) {
+		return appointmentService.createAppointment(dto);
 	}
 
 	@PutMapping("/update/{id}")
-	public AppointmentPatientResponseDTO update(@PathVariable Long id, @RequestBody AppointmentPatientRequestDTO dto) {
-		return service.update(id, dto);
+	public String updateAppointment(@PathVariable Long id, @RequestBody AppointmentDTO dto) {
+		return appointmentService.updateAppointment(id, dto);
 	}
 
 	@GetMapping("/fetchByid/{id}")
-	public AppointmentPatientResponseDTO get(@PathVariable Long id) {
-		return service.getById(id);
+	public Appointment getAppointmentById(@PathVariable Long id) {
+		return appointmentService.getAppointmentById(id);
 	}
 
-	@GetMapping("/fetchAll")
-	public List<AppointmentPatientResponseDTO> all() {
-		return service.getAll();
+	@GetMapping("/all")
+	public Iterable<Appointment> getAllAppointments() {
+		return appointmentService.getAllAppointments();
 	}
 
-	@DeleteMapping("/Delete/{id}")
-	public String delete(@PathVariable Long id) {
-		return service.delete(id);
+	@DeleteMapping("/delete/{id}")
+	public String deleteAppointment(@PathVariable Long id) {
+		return appointmentService.deleteAppointment(id);
 	}
 }

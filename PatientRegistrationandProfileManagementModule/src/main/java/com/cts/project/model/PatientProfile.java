@@ -14,103 +14,63 @@ public class PatientProfile {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long patientId;
 
-	private String patientName;
+	private String name;
 	private String dateOfBirth;
-	private int age;
-	private String gender;
-	private String bloodGroup;
-	private String guardianName;
-	private String contactNumber;
-	private String email;
-	private String address;
+	private String contactDetails;
 	private String medicalHistory;
+
 	public PatientProfile() {
 		// TODO Auto-generated constructor stub
 	}
-	
-	public PatientProfile(Long patientId, String patientName, String dateOfBirth, int age, String gender,
-			String bloodGroup, String guardianName, String contactNumber, String email, String address,
+
+	public PatientProfile(Long patientId, String name, String dateOfBirth, String contactDetails,
 			String medicalHistory) {
 		super();
 		this.patientId = patientId;
-		this.patientName = patientName;
+		this.name = name;
 		this.dateOfBirth = dateOfBirth;
-		this.age = age;
-		this.gender = gender;
-		this.bloodGroup = bloodGroup;
-		this.guardianName = guardianName;
-		this.contactNumber = contactNumber;
-		this.email = email;
-		this.address = address;
+		this.contactDetails = contactDetails;
 		this.medicalHistory = medicalHistory;
 	}
 
 	public Long getPatientId() {
 		return patientId;
 	}
+
 	public void setPatientId(Long patientId) {
 		this.patientId = patientId;
 	}
-	public String getPatientName() {
-		return patientName;
+
+	public String getName() {
+		return name;
 	}
-	public void setPatientName(String patientName) {
-		this.patientName = patientName;
+
+	public void setName(String name) {
+		this.name = name;
 	}
+
 	public String getDateOfBirth() {
 		return dateOfBirth;
 	}
+
 	public void setDateOfBirth(String dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
-	public int getAge() {
-		return age;
+
+	public String getContactDetails() {
+		return contactDetails;
 	}
-	public void setAge(int age) {
-		this.age = age;
+
+	public void setContactDetails(String contactDetails) {
+		this.contactDetails = contactDetails;
 	}
-	public String getGender() {
-		return gender;
-	}
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
-	public String getBloodGroup() {
-		return bloodGroup;
-	}
-	public void setBloodGroup(String bloodGroup) {
-		this.bloodGroup = bloodGroup;
-	}
-	public String getGuardianName() {
-		return guardianName;
-	}
-	public void setGuardianName(String guardianName) {
-		this.guardianName = guardianName;
-	}
-	public String getContactNumber() {
-		return contactNumber;
-	}
-	public void setContactNumber(String contactNumber) {
-		this.contactNumber = contactNumber;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String getAddress() {
-		return address;
-	}
-	public void setAddress(String address) {
-		this.address = address;
-	}
+
 	public String getMedicalHistory() {
 		return medicalHistory;
 	}
+
 	public void setMedicalHistory(String medicalHistory) {
 		this.medicalHistory = medicalHistory;
 	}
-	
 
 }

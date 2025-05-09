@@ -1,14 +1,11 @@
 package com.cts.project.service;
 
-import java.util.ArrayList;
-
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cts.project.dto.AppointmentPatientRequestDTO;
-import com.cts.project.dto.AppointmentPatientResponseDTO;
-import com.cts.project.exception.AppointmentNotFoundException;
+import com.cts.project.dto.AppointmentDTO;
+import com.cts.project.dto.PatientProfile;
+import com.cts.project.feignclient.PatientClient;
 import com.cts.project.model.Appointment;
 import com.cts.project.repository.AppointmentRepository;
 
@@ -16,66 +13,76 @@ import com.cts.project.repository.AppointmentRepository;
 public class AppointmentServiceImpl implements AppointmentService {
 
 	@Autowired
-	private AppointmentRepository repo;
+	private AppointmentRepository appointmentRepository;
+
+	@Autowired
+	private PatientClient patientClient; // Patient Module Communication
+
+//	@Autowired
+//	private DoctorScheduleClient doctorScheduleClient; // Doctor Schedule Module Communication
+
+//	@Autowired
+//	private NotificationClient notificationClient; // Notification Module Communication
+
+//	@Autowired
+//	private MedicalHistoryClient medicalHistoryClient; // Medical History Module Communication
 
 	@Override
-	public AppointmentPatientResponseDTO create(AppointmentPatientRequestDTO dto) {
-		Appointment app = new Appointment();
-		app.setPatientId(dto.getPatientId());
-		app.setDoctorId(dto.getDoctorId());
-		app.setAppointmentDate(dto.getAppointmentDate());
-		app.setStatus("Scheduled");
-		repo.save(app);
-
-		return toResponse(app);
-	}
-
-	@Override
-	public AppointmentPatientResponseDTO update(Long id, AppointmentPatientRequestDTO dto) {
-		Appointment app = repo.findById(id)
-				.orElseThrow(() -> new AppointmentNotFoundException("Appointment not found"));
-
-		app.setDoctorId(dto.getDoctorId());
-		app.setAppointmentDate(dto.getAppointmentDate());
-		app.setStatus("Rescheduled");
-		repo.save(app);
-
-		return toResponse(app);
-	}
-
-	@Override
-	public AppointmentPatientResponseDTO getById(Long id) {
-		Appointment app = repo.findById(id)
-				.orElseThrow(() -> new AppointmentNotFoundException("Appointment not found"));
-		return toResponse(app);
-	}
-
-	@Override
-	public List<AppointmentPatientResponseDTO> getAll() {
-		List<Appointment> appointments = repo.findAll();
-		List<AppointmentPatientResponseDTO> responseList = new ArrayList<>();
-		for (Appointment app : appointments) {
-			responseList.add(toResponse(app));
+	public String createAppointment(AppointmentDTO dto) {
+		// Validate PatientID by calling Patient Module
+		try {
+			PatientProfile patient = patientClient.getPatientById(dto.getPatientId());
+			if (patient == null) {
+				return "Patient does not exist. Cannot book appointment.";
+			}
+		} catch (Exception e) {
+			return "Invalid PatientID. Please check.";
 		}
-		return responseList;
+
+		Appointment appointment = new Appointment();
+		appointment.setPatientId(dto.getPatientId());
+		appointment.setDoctorId(dto.getDoctorId());
+		appointment.setAppointmentDate(dto.getAppointmentDate());
+		appointment.setStatus(dto.getStatus());
+
+		appointmentRepository.save(appointment);
+		return "Appointment booked successfully";
 
 	}
 
 	@Override
-	public String delete(Long id) {
-		Appointment app = repo.findById(id)
-				.orElseThrow(() -> new AppointmentNotFoundException("Appointment not found"));
-		repo.delete(app);
-		return "Appointment deleted";
+	public String updateAppointment(Long id, AppointmentDTO dto) {
+		// Fetch Appointment to Update
+		Appointment appointment = appointmentRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Appointment not found"));
+		appointment.setAppointmentDate(dto.getAppointmentDate());
+		appointment.setStatus(dto.getStatus());
+		appointmentRepository.save(appointment);
+
+		// If appointment status is 'Completed', send data to Medical History Module
+		if ("Completed".equals(dto.getStatus())) {
+			// TODO: Un-comment once Medical History module is ready
+			// medicalHistoryClient.createMedicalHistory(new
+			// MedicalHistoryDTO(dto.getPatientId(), "Completed", "Treatment",
+			// dto.getAppointmentDate()));
+		}
+
+		return "Appointment updated successfully";
 	}
 
-	private AppointmentPatientResponseDTO toResponse(Appointment app) {
-		AppointmentPatientResponseDTO dto = new AppointmentPatientResponseDTO();
-		dto.setAppointmentId(app.getAppointmentId());
-		dto.setPatientId(app.getPatientId());
-		dto.setDoctorId(app.getDoctorId());
-		dto.setAppointmentDate(app.getAppointmentDate());
-		dto.setStatus(app.getStatus());
-		return dto;
+	@Override
+	public Appointment getAppointmentById(Long id) {
+		return appointmentRepository.findById(id).orElseThrow(() -> new RuntimeException("Appointment not found"));
+	}
+
+	@Override
+	public Iterable<Appointment> getAllAppointments() {
+		return appointmentRepository.findAll();
+	}
+
+	@Override
+	public String deleteAppointment(Long id) {
+		appointmentRepository.deleteById(id);
+		return "Appointment deleted successfully";
 	}
 }

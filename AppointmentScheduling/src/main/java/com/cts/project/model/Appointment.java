@@ -2,12 +2,15 @@ package com.cts.project.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Appointment_info")
 public class Appointment {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long appointmentId;
@@ -15,7 +18,7 @@ public class Appointment {
 	private Long patientId;
 	private Long doctorId;
 	private LocalDateTime appointmentDate;
-	private String status;
+	private String status; // Scheduled, Cancelled, Completed
 
 	public Appointment() {
 		// TODO Auto-generated constructor stub
@@ -59,8 +62,8 @@ public class Appointment {
 		return appointmentDate;
 	}
 
-	public void setAppointmentDate(LocalDateTime string) {
-		this.appointmentDate = string;
+	public void setAppointmentDate(LocalDateTime appointmentDate) {
+		this.appointmentDate = appointmentDate;
 	}
 
 	public String getStatus() {
@@ -70,5 +73,4 @@ public class Appointment {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-
 }

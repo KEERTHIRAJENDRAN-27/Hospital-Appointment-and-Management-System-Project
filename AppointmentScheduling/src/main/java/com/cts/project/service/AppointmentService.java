@@ -1,18 +1,16 @@
 package com.cts.project.service;
 
-import java.util.List;
-
-import com.cts.project.dto.AppointmentPatientRequestDTO;
-import com.cts.project.dto.AppointmentPatientResponseDTO;
+import com.cts.project.dto.AppointmentDTO;
+import com.cts.project.model.Appointment;
 
 public interface AppointmentService {
-	public abstract AppointmentPatientResponseDTO create(AppointmentPatientRequestDTO dto);
+	public abstract String createAppointment(AppointmentDTO dto);
 
-	public abstract AppointmentPatientResponseDTO update(Long id, AppointmentPatientRequestDTO dto);
+	public abstract String updateAppointment(Long id, AppointmentDTO dto);
 
-	public abstract AppointmentPatientResponseDTO getById(Long id);
+	public abstract Appointment getAppointmentById(Long id);
 
-	public abstract List<AppointmentPatientResponseDTO> getAll();
+	public abstract Iterable<Appointment> getAllAppointments();
 
-	public abstract String delete(Long id);
+	public abstract String deleteAppointment(Long id);
 }

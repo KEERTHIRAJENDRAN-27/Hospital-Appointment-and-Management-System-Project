@@ -2,15 +2,13 @@ package com.cts.project.dto;
 
 public class PatientProfileDTO {
 	private Long patientId;
-	private String name;
-	private String dateOfBirth;
-	private String contactDetails;
-	private String medicalHistory;
-
-	public PatientProfileDTO() {
+    private String name;
+    private String dateOfBirth;
+    private String contactDetails;
+    private String medicalHistory;
+    public PatientProfileDTO() {
 		// TODO Auto-generated constructor stub
 	}
-
 	public PatientProfileDTO(Long patientId, String name, String dateOfBirth, String contactDetails,
 			String medicalHistory) {
 		super();
@@ -20,45 +18,34 @@ public class PatientProfileDTO {
 		this.contactDetails = contactDetails;
 		this.medicalHistory = medicalHistory;
 	}
-
 	public Long getPatientId() {
 		return patientId;
 	}
-
 	public void setPatientId(Long patientId) {
 		this.patientId = patientId;
 	}
-
 	public String getName() {
 		return name;
 	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
 	public String getDateOfBirth() {
 		return dateOfBirth;
 	}
-
 	public void setDateOfBirth(String dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
-
 	public String getContactDetails() {
 		return contactDetails;
 	}
-
 	public void setContactDetails(String contactDetails) {
 		this.contactDetails = contactDetails;
 	}
-
 	public String getMedicalHistory() {
 		return medicalHistory;
 	}
-
 	public void setMedicalHistory(String medicalHistory) {
 		this.medicalHistory = medicalHistory;
 	}
-
 }

@@ -1,7 +1,7 @@
 package com.cts.project.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,73 +14,67 @@ import com.cts.project.repository.PatientProfileRepository;
 @Service
 public class PatientProfileServiceImpl implements PatientProfileService {
 	@Autowired
-	private PatientProfileRepository repository;
+	private PatientProfileRepository patientRepository;
 
 	@Override
-	public String createPatient(PatientProfileDTO dto) {
-		// TODO Auto-generated method stub
+	public PatientProfileDTO registerPatient(PatientProfileDTO dto) {
 		PatientProfile patient = new PatientProfile();
-
-		patient.setPatientName(dto.getPatientName());
+		patient.setName(dto.getName());
 		patient.setDateOfBirth(dto.getDateOfBirth());
-		patient.setGender(dto.getGender());
-		patient.setAge(dto.getAge());
-		patient.setBloodGroup(dto.getBloodGroup());
-		patient.setGuardianName(dto.getGuardianName());
-		patient.setContactNumber(dto.getContactNumber());
-		patient.setEmail(dto.getEmail());
-		patient.setAddress(dto.getAddress());
+		patient.setContactDetails(dto.getContactDetails());
 		patient.setMedicalHistory(dto.getMedicalHistory());
-
-		repository.save(patient);
-		return "Patient registered successfully.";
+		PatientProfile saved = patientRepository.save(patient);
+		dto.setPatientId(saved.getPatientId());
+		return dto;
 	}
 
 	@Override
-	public String updatePatient(Long id, PatientProfileDTO dto) {
-		// TODO Auto-generated method stub
-		Optional<PatientProfile> optionalPatient = repository.findById(id);
-		if (!optionalPatient.isPresent()) {
-			throw new PatientNotFoundException("Patient not found with ID: " + id);
-		}
-
-		PatientProfile patient = optionalPatient.get();
-
-		patient.setPatientName(dto.getPatientName());
-		patient.setDateOfBirth(dto.getDateOfBirth());
-		patient.setGender(dto.getGender());
-		patient.setAge(dto.getAge());
-		patient.setBloodGroup(dto.getBloodGroup());
-		patient.setGuardianName(dto.getGuardianName());
-		patient.setContactNumber(dto.getContactNumber());
-		patient.setEmail(dto.getEmail());
-		patient.setAddress(dto.getAddress());
-		patient.setMedicalHistory(dto.getMedicalHistory());
-
-		repository.save(patient);
-		return "Patient profile updated successfully.";
-	}
-
-	@Override
-	public PatientProfile getPatientById(Long id) {
-		// TODO Auto-generated method stub
-		return repository.findById(id)
+	public PatientProfileDTO getPatientById(Long id) {
+		PatientProfile patient = patientRepository.findById(id)
 				.orElseThrow(() -> new PatientNotFoundException("Patient not found with ID: " + id));
+		PatientProfileDTO dto = new PatientProfileDTO();
+		dto.setPatientId(patient.getPatientId());
+		dto.setName(patient.getName());
+		dto.setDateOfBirth(patient.getDateOfBirth());
+		dto.setContactDetails(patient.getContactDetails());
+		dto.setMedicalHistory(patient.getMedicalHistory());
+		return dto;
 	}
 
 	@Override
-	public List<PatientProfile> getAllPatients() {
-		// TODO Auto-generated method stub
-		return repository.findAll();
-	}
-
-	@Override
-	public String deletePatient(Long id) {
-		// TODO Auto-generated method stub
-		if (!repository.existsById(id)) {
-			throw new PatientNotFoundException("Patient not found with ID: " + id);
+	public List<PatientProfileDTO> getAllPatients() {
+		List<PatientProfile> patients = patientRepository.findAll();
+		List<PatientProfileDTO> dtoList = new ArrayList<>();
+		for (PatientProfile patient : patients) {
+			PatientProfileDTO dto = new PatientProfileDTO();
+			dto.setPatientId(patient.getPatientId());
+			dto.setName(patient.getName());
+			dto.setDateOfBirth(patient.getDateOfBirth());
+			dto.setContactDetails(patient.getContactDetails());
+			dto.setMedicalHistory(patient.getMedicalHistory());
+			dtoList.add(dto);
 		}
-		repository.deleteById(id);
-		return "Patient deleted successfully.";
+		return dtoList;
 	}
+
+	@Override
+	public PatientProfileDTO updatePatient(Long id, PatientProfileDTO dto) {
+		PatientProfile patient = patientRepository.findById(id)
+				.orElseThrow(() -> new PatientNotFoundException("Patient not found with ID: " + id));
+		patient.setName(dto.getName());
+		patient.setDateOfBirth(dto.getDateOfBirth());
+		patient.setContactDetails(dto.getContactDetails());
+		patient.setMedicalHistory(dto.getMedicalHistory());
+		PatientProfile updated = patientRepository.save(patient);
+		dto.setPatientId(updated.getPatientId());
+		return dto;
+	}
+
+	@Override
+	public void deletePatient(Long id) {
+		PatientProfile patient = patientRepository.findById(id)
+				.orElseThrow(() -> new PatientNotFoundException("Patient not found with ID: " + id));
+		patientRepository.delete(patient);
+	}
+
 }

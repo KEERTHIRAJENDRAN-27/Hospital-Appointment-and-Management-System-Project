@@ -2,12 +2,18 @@ package com.cts.project.feignclient;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.cts.project.dto.PatientProfile;
+import com.cts.project.dto.PatientProfileDTO;
 
-@FeignClient(name = "PATIENT-SERVICE", url = "http://localhost:8001")
-
+@FeignClient(name = "PATIENTREGISTRATIONANDPROFILEMANAGEMENTMODULE", url = "http://localhost:8001/patients")
 public interface PatientClient {
-	@GetMapping("/patients/{id}")
-	PatientProfile getPatient(Long id);
+	@PostMapping("/save")
+	public String createPatient(@RequestBody PatientProfileDTO dto);
+
+	@GetMapping("/fetchByid/{id}")
+	PatientProfile getPatientById(@PathVariable("id") Long patientId);
 }

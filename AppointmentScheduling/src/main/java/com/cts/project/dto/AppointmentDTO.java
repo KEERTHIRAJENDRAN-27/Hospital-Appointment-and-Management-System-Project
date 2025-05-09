@@ -7,7 +7,7 @@ public class AppointmentDTO {
 	private Long patientId;
 	private Long doctorId;
 	private LocalDateTime appointmentDate;
-	private String status;
+	private String status; // Scheduled, Cancelled, Completed
 
 	public AppointmentDTO() {
 		// TODO Auto-generated constructor stub
