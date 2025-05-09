@@ -1,43 +1,40 @@
 package com.cts.project.model;
 
-import jakarta.persistence.Entity;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.*;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "DoctorSchedule_info")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class DoctorSchedule {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long scheduleId;
 	private Long doctorId;
-	private String availableTimeSlots; // e.g., "09:00-11:00,14:00-16:00"
+
+	@Column(name = "availableTimeSlots")
+	private String availableTimeSlots; // Comma-separated string of timestamps
+
+	public List<LocalDateTime> getTimeSlotsAsList() {
+		return Arrays.stream(availableTimeSlots.split(",")).map(LocalDateTime::parse).collect(Collectors.toList());
+	}
+
+	public void setTimeSlotsFromList(List<LocalDateTime> timeSlots) {
+		this.availableTimeSlots = timeSlots.stream().map(LocalDateTime::toString).collect(Collectors.joining(","));
+	}
 
 	public DoctorSchedule() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public DoctorSchedule(Long scheduleId, Long doctorId, String availableTimeSlots) {
+	public DoctorSchedule(Long doctorId, String availableTimeSlots) {
 		super();
-		this.scheduleId = scheduleId;
 		this.doctorId = doctorId;
 		this.availableTimeSlots = availableTimeSlots;
-	}
-
-	public Long getScheduleId() {
-		return scheduleId;
-	}
-
-	public void setScheduleId(Long scheduleId) {
-		this.scheduleId = scheduleId;
 	}
 
 	public Long getDoctorId() {
@@ -55,5 +52,4 @@ public class DoctorSchedule {
 	public void setAvailableTimeSlots(String availableTimeSlots) {
 		this.availableTimeSlots = availableTimeSlots;
 	}
-
 }

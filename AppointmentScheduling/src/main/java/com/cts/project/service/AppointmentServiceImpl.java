@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cts.project.dto.AppointmentDTO;
+import com.cts.project.dto.DoctorScheduleDTO;
 import com.cts.project.dto.PatientProfile;
+import com.cts.project.feignclient.DoctorScheduleClient;
 import com.cts.project.feignclient.PatientClient;
 import com.cts.project.model.Appointment;
 import com.cts.project.repository.AppointmentRepository;
@@ -18,8 +20,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Autowired
 	private PatientClient patientClient; // Patient Module Communication
 
-//	@Autowired
-//	private DoctorScheduleClient doctorScheduleClient; // Doctor Schedule Module Communication
+	@Autowired
+	private DoctorScheduleClient doctorScheduleClient; // Doctor Schedule Module Communication
 
 //	@Autowired
 //	private NotificationClient notificationClient; // Notification Module Communication
@@ -33,12 +35,23 @@ public class AppointmentServiceImpl implements AppointmentService {
 		try {
 			PatientProfile patient = patientClient.getPatientById(dto.getPatientId());
 			if (patient == null) {
-				return "Patient does not exist. Cannot book appointment.";
+				return "Invalid PatientID. Patient not found.";
 			}
 		} catch (Exception e) {
-			return "Invalid PatientID. Please check.";
+			return "Error validating PatientID: " + e.getMessage();
 		}
 
+		// Validate DoctorID and appointment time using DoctorSchedule Module
+		try {
+			DoctorScheduleDTO schedule = doctorScheduleClient.getScheduleById(dto.getDoctorId());
+			if (schedule == null || !schedule.getAvailableTimeSlots().contains(dto.getAppointmentDate().toString())) {
+				return "Invalid DoctorID or time slot not available.";
+			}
+		} catch (Exception e) {
+			return "Error validating DoctorID: " + e.getMessage();
+		}
+
+		// Proceed to save appointment
 		Appointment appointment = new Appointment();
 		appointment.setPatientId(dto.getPatientId());
 		appointment.setDoctorId(dto.getDoctorId());
@@ -46,7 +59,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 		appointment.setStatus(dto.getStatus());
 
 		appointmentRepository.save(appointment);
-		return "Appointment booked successfully";
+		return "Appointment booked successfully.";
 
 	}
 

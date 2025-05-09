@@ -1,12 +1,12 @@
 package com.cts.project.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cts.project.dto.DoctorScheduleDTO;
-import com.cts.project.exception.DoctorScheduleNotFoundException;
 import com.cts.project.model.DoctorSchedule;
 import com.cts.project.repository.DoctorScheduleRepository;
 
@@ -18,43 +18,51 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
 
 	@Override
 	public String createSchedule(DoctorScheduleDTO dto) {
-		// TODO Auto-generated method stub
 		DoctorSchedule schedule = new DoctorSchedule();
 		schedule.setDoctorId(dto.getDoctorId());
-		schedule.setAvailableTimeSlots(dto.getAvailableTimeSlots());
+		schedule.setTimeSlotsFromList(dto.getAvailableTimeSlots());
 		repository.save(schedule);
-		return "Doctor schedule created successfully.";
+		return "Schedule created successfully.";
 	}
 
 	@Override
-	public DoctorSchedule getScheduleById(Long doctorId) {
-		// TODO Auto-generated method stub
-		return repository.findById(doctorId).orElseThrow(
-				() -> new DoctorScheduleNotFoundException("Doctor schedule not found with ID: " + doctorId));
+	public DoctorScheduleDTO getScheduleById(Long doctorId) {
+		DoctorSchedule schedule = repository.findById(doctorId).orElse(null);
+		if (schedule == null)
+			return null;
+
+		DoctorScheduleDTO dto = new DoctorScheduleDTO();
+		dto.setDoctorId(schedule.getDoctorId());
+		dto.setAvailableTimeSlots(schedule.getTimeSlotsAsList());
+		return dto;
 	}
 
 	@Override
-	public List<DoctorSchedule> getAllSchedules() {
-		// TODO Auto-generated method stub
-		return repository.findAll();
+	public List<DoctorScheduleDTO> getAllSchedules() {
+		return repository.findAll().stream().map(schedule -> {
+			DoctorScheduleDTO dto = new DoctorScheduleDTO();
+			dto.setDoctorId(schedule.getDoctorId());
+			dto.setAvailableTimeSlots(schedule.getTimeSlotsAsList());
+			return dto;
+		}).collect(Collectors.toList());
 	}
 
 	@Override
 	public String updateSchedule(Long doctorId, DoctorScheduleDTO dto) {
-		// TODO Auto-generated method stub
-		DoctorSchedule schedule = repository.findById(doctorId).orElseThrow(
-				() -> new DoctorScheduleNotFoundException("Doctor schedule not found with ID: " + doctorId));
-		schedule.setAvailableTimeSlots(dto.getAvailableTimeSlots());
+		DoctorSchedule schedule = repository.findById(doctorId).orElse(null);
+		if (schedule == null)
+			return "Doctor schedule not found.";
+
+		schedule.setTimeSlotsFromList(dto.getAvailableTimeSlots());
 		repository.save(schedule);
-		return "Doctor schedule updated successfully.";
+		return "Schedule updated.";
 	}
 
 	@Override
 	public String deleteSchedule(Long doctorId) {
-		// TODO Auto-generated method stub
-		DoctorSchedule schedule = repository.findById(doctorId).orElseThrow(
-				() -> new DoctorScheduleNotFoundException("Doctor schedule not found with ID: " + doctorId));
-		repository.delete(schedule);
-		return "Doctor schedule deleted successfully.";
+		if (!repository.existsById(doctorId))
+			return "Doctor schedule not found.";
+		repository.deleteById(doctorId);
+		return "Schedule deleted.";
 	}
 }

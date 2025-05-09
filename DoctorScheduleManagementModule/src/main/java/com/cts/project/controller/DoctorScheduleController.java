@@ -24,27 +24,27 @@ public class DoctorScheduleController {
 	private DoctorScheduleService service;
 
 	@PostMapping("/save")
-	public String create(@RequestBody DoctorScheduleDTO dto) {
+	public String createSchedule(@RequestBody DoctorScheduleDTO dto) {
 		return service.createSchedule(dto);
 	}
 
-	@PutMapping("/update/{doctorId}")
-	public String update(@PathVariable Long doctorId, @RequestBody DoctorScheduleDTO dto) {
-		return service.updateSchedule(doctorId, dto);
-	}
-
-	@GetMapping("/getScheduleById/{doctorId}")
-	public DoctorSchedule get(@PathVariable Long doctorId) {
+	@GetMapping("/fetchByid/{doctorId}")
+	public DoctorScheduleDTO getScheduleById(@PathVariable Long doctorId) {
 		return service.getScheduleById(doctorId);
 	}
 
 	@GetMapping("/fetchAll")
-	public List<DoctorSchedule> getAll() {
+	public List<DoctorScheduleDTO> getAllSchedules() {
 		return service.getAllSchedules();
 	}
 
+	@PutMapping("/update/{doctorId}")
+	public String updateSchedule(@PathVariable Long doctorId, @RequestBody DoctorScheduleDTO dto) {
+		return service.updateSchedule(doctorId, dto);
+	}
+
 	@DeleteMapping("/delete/{doctorId}")
-	public String delete(@PathVariable Long doctorId) {
+	public String deleteSchedule(@PathVariable Long doctorId) {
 		return service.deleteSchedule(doctorId);
 	}
 }

@@ -1,17 +1,16 @@
 package com.cts.project.dto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class DoctorScheduleDTO {
 	private Long doctorId;
-	private List<LocalDateTime> availableTimeSlots;
+	private List<String> availableTimeSlots;
 
 	public DoctorScheduleDTO() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public DoctorScheduleDTO(Long doctorId, List<LocalDateTime> availableTimeSlots) {
+	public DoctorScheduleDTO(Long doctorId, List<String> availableTimeSlots) {
 		super();
 		this.doctorId = doctorId;
 		this.availableTimeSlots = availableTimeSlots;
@@ -25,11 +24,12 @@ public class DoctorScheduleDTO {
 		this.doctorId = doctorId;
 	}
 
-	public List<LocalDateTime> getAvailableTimeSlots() {
+	public List<String> getAvailableTimeSlots() {
 		return availableTimeSlots;
 	}
 
-	public void setAvailableTimeSlots(List<LocalDateTime> availableTimeSlots) {
+	public void setAvailableTimeSlots(List<String> availableTimeSlots) {
 		this.availableTimeSlots = availableTimeSlots;
 	}
+
 }
